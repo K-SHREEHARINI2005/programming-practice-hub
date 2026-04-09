@@ -1,0 +1,238 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+} Node;
+
+Node* insert(Node* root, int data);
+Node* deleteNode(Node* root, int data);
+Node* findMin(Node* root);
+Node* findMax(Node* root);
+Node* search(Node* root, int data);
+int findHeight(Node* root);
+void inOrderTraversal(Node* root);
+void preOrderTraversal(Node* root);
+void postOrderTraversal(Node* root);
+void freeTree(Node* root);
+
+#include"bst.h"
+Node* insert(Node* root, int data) {
+    if (root == NULL) {
+        root = (Node*)malloc(sizeof(Node));
+        if (root == NULL) {
+            printf("Memory allocation failed.\n");
+            exit(1);
+        }
+        root->data = data;
+        root->left = NULL;
+        root->right = NULL;
+    } else if (data < root->data) {
+        root->left = insert(root->left, data);
+    } else if (data > root->data) {
+        root->right = insert(root->right, data);
+    }
+    return root;
+}
+
+
+Node* deleteNode(Node* root, int data) {
+    if (root == NULL) {
+        return NULL;
+    }
+    if (data < root->data) {
+        root->left = deleteNode(root->left, data);
+    } else if (data > root->data) {
+        root->right = deleteNode(root->right, data);
+    } else {
+        if (root->left == NULL) {
+            Node* temp = root->right;
+            free(root);
+            return temp;
+        } else if (root->right == NULL) {
+            Node* temp = root->left;
+            free(root);
+            return temp;
+        }
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+    return root;
+}
+
+
+Node* findMin(Node* root) {
+    while (root && root->left != NULL) {
+        root = root->left;
+    }
+    return root;
+}
+
+
+Node* findMax(Node* root) {
+    while (root && root->right != NULL) {
+        root = root->right;
+    }
+    return root;
+}
+
+Node* search(Node* root, int data) {
+    if (root == NULL || root->data == data) {
+        return root;
+    }
+    if (data < root->data) {
+        return search(root->left, data);
+    }
+    return search(root->right, data);
+}
+
+
+int findHeight(Node* root) {
+    if (root == NULL) {
+        return -1;
+    }
+    int leftHeight = findHeight(root->left);
+    int rightHeight = findHeight(root->right);
+    return (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
+}
+
+
+void inOrderTraversal(Node* root) {
+    if (root != NULL) {
+        inOrderTraversal(root->left);
+        printf("%d ", root->data);
+        inOrderTraversal(root->right);
+    }
+}
+
+
+void preOrderTraversal(Node* root) {
+    if (root != NULL) {
+        printf("%d ", root->data);
+        preOrderTraversal(root->left);
+        preOrderTraversal(root->right);
+    }
+}
+
+void postOrderTraversal(Node* root) {
+    if (root != NULL) {
+        postOrderTraversal(root->left);
+        postOrderTraversal(root->right);
+        printf("%d ", root->data);
+    }
+}
+
+void freeTree(Node* root) {
+    if (root != NULL) {
+        freeTree(root->left);
+        freeTree(root->right);
+        free(root);
+    }
+}
+
+#include"bst.h"
+int main() {
+    Node* root = NULL;
+    int choice, data;
+
+    while (1) {
+        printf("\nBinary Search Tree Operations\n");
+        printf("1. Insert\n");
+        printf("2. Delete\n");
+        printf("3. Find Min\n");
+        printf("4. Find Max\n");
+        printf("5. Search\n");
+        printf("6. Find Height\n");
+        printf("7. In-Order Traversal\n");
+        printf("8. Pre-Order Traversal\n");
+        printf("9. Post-Order Traversal\n");
+        printf("10. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert: ");
+                scanf("%d", &data);
+                root = insert(root, data);
+                printf("Inserted %d into the BST.\n", data);
+                break;
+
+            case 2:
+                printf("Enter value to delete: ");
+                scanf("%d", &data);
+                root = deleteNode(root, data);
+                printf("Deleted %d from the BST.\n", data);
+                break;
+
+            case 3:
+                {
+                    Node* minNode = findMin(root);
+                    if (minNode) {
+                        printf("Minimum value in the BST is %d.\n", minNode->data);
+                    } else {
+                        printf("The BST is empty.\n");
+                    }
+                }
+                break;
+
+            case 4:
+                {
+                    Node* maxNode = findMax(root);
+                    if (maxNode) {
+                        printf("Maximum value in the BST is %d.\n", maxNode->data);
+                    } else {
+                        printf("The BST is empty.\n");
+                    }
+                }
+                break;
+
+            case 5:
+                printf("Enter value to search: ");
+                scanf("%d", &data);
+                Node* searchNode = search(root, data);
+                if (searchNode) {
+                    printf("%d found in the BST.\n", data);
+                } else {
+                    printf("%d not found in the BST.\n", data);
+                }
+                break;
+
+            case 6:
+                printf("Height of the BST is %d.\n", findHeight(root));
+                break;
+
+            case 7:
+                printf("In-Order Traversal:\n");
+                inOrderTraversal(root);
+                printf("\n");
+                break;
+
+            case 8:
+                printf("Pre-Order Traversal:\n");
+                preOrderTraversal(root);
+                printf("\n");
+                break;
+
+            case 9:
+                printf("Post-Order Traversal:\n");
+                postOrderTraversal(root);
+                printf("\n");
+                break;
+
+            case 10:
+                freeTree(root);
+                printf("Exiting...\n");
+                return 0;
+
+            default:
+                printf("Invalid choice. Please try again.\n");
+                break;
+        }
+    }
+}
+
+[2

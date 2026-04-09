@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+int main() {
+    FILE *a, *b;
+    char input[100], output[110];
+    char start[] = "stx", end[] = "etx", escape[] = "esc";
+    int i, j = 0;
+    a = fopen("byst.c", "r");
+    if (a == NULL) {
+        printf("Cannot open input file\n");
+        return 1;
+    }
+    fgets(input, sizeof(input), a);
+    fclose(a);
+    strcpy(output, start);
+    j = strlen(start);
+    for (i = 0; i < strlen(input); i++) {
+        if (strncmp(&input[i], start, strlen(start)) == 0 ||
+            strncmp(&input[i], end, strlen(end)) == 0 ||
+            strncmp(&input[i], escape, strlen(escape)) == 0) {
+            strcpy(&output[j], escape);
+            j += strlen(escape);
+        }
+        output[j++] = input[i];
+    }
+    strcpy(&output[j], end);
+
+    b = fopen("bysto.c", "w");
+    if (b == NULL) {
+        printf("Cannot open output file\n");
+        return 1;
+    }
+    fputs(output, b);
+    fclose(b);
+    printf("Byte Stuffed Data written\n");
+    return 0;
+}

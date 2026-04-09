@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int jobID;
+    struct Node* next;
+};
+struct Queue {
+    struct Node* front;
+    struct Node* rear;
+};
+
+#include"pri.h"
+struct Node* newNode(int jobID) {
+    struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+    temp->jobID = jobID;
+    temp->next = NULL;
+    return temp;
+}
+
+void initialize(struct Queue* q) {
+    q->front = q->rear = NULL;
+}
+
+int isEmpty(struct Queue* q) {
+    return q->front == NULL;
+}
+void enqueue(struct Queue* q, int jobID) {
+    struct Node* temp = newNode(jobID);
+    if (q->rear == NULL) {
+        q->front = q->rear = temp;
+        printf("Enqueued job ID: %d\n", jobID);
+        return;
+    }
+    q->rear->next = temp;
+    q->rear = temp;
+    printf("Enqueued job ID: %d\n", jobID);
+}
+
+int dequeue(struct Queue* q) {
+    if (isEmpty(q)) {
+        printf("Queue is empty! No jobs to dequeue.\n");
+        return -1; 
+    }
+
+    struct Node* temp = q->front;
+    int jobID = temp->jobID;
+    q->front = q->front->next;
+
+    if (q->front == NULL)
+        q->rear = NULL;
+
+    free(temp);
+    printf("Dequeued job ID: %d\n", jobID);
+    return jobID;
+}
+
+void makeEmpty(struct Queue* q) {
+    while (!isEmpty(q)) {
+        dequeue(q);
+    }
+    printf("Queue is now empty.\n");
+}
+
+void display(struct Queue* q) {
+    if (isEmpty(q)) {
+        printf("Queue is empty!\n");
+        return;
+    }
+
+    struct Node* temp = q->front;
+    printf("Job sequence in the printer queue: ");
+    while (temp != NULL) {
+        printf("%d ", temp->jobID);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+#include"pri.h"
+int main() {
+    struct Queue q;
+    initialize(&q);
+    int choice, jobID;
+
+    do {
+        printf("\nPrinter Queue Operations Menu:\n");
+        printf("1. Enqueue (Add a job)\n");
+        printf("2. Dequeue (Remove a job)\n");
+        printf("3. Display queue\n");
+        printf("4. Make queue empty\n");
+        printf("5. Check if queue is empty\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the job ID to enqueue: ");
+                scanf("%d", &jobID);
+                enqueue(&q, jobID);
+                break;
+            case 2:
+                dequeue(&q);
+                break;
+            case 3:
+                display(&q);
+                break;
+            case 4:
+                makeEmpty(&q);
+                break;
+            case 5:
+                if (isEmpty(&q))
+                    printf("Queue is empty.\n");
+                else
+                    printf("Queue is not empty.\n");
+                break;
+            case 6:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice! Please enter a number between 1 and 6.\n");
+        }
+    } while (choice != 6);
+
+    return 0;
+}

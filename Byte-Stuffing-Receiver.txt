@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    FILE *in = fopen("bysto.c", "r");
+    FILE *out = fopen("output.txt", "w");
+
+    if (!in || !out) {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    char b[100][20], ch[20];
+    int k = 0;
+
+    while (fscanf(in, " %s", ch) != EOF) {
+        strcpy(b[k], ch);
+        k++;
+    }
+
+    if (strcmp(b[0], "stx") != 0 || strcmp(b[k - 1], "etx") != 0) {
+        printf("Invalid frame.\n");
+        fclose(in);
+        fclose(out);
+        return 1;
+    }
+    int i;
+    for (i = 1; i < k - 1; i++) {
+        if(strcmp(b[i], "esc") == 0 && strcmp(b[i + 1], "esc") == 0){
+           fprintf(out,"%s\t",b[i+1]);
+            i++;
+        }
+        else if (strcmp(b[i], "esc") == 0 &&(strcmp(b[i + 1], "stx") == 0 || strcmp(b[i + 1], "etx") == 0)) {
+            fprintf(out, "%s\t ", b[i + 1]);
+            i++;
+        } else {
+            fprintf(out, "%s ", b[i]);
+        }
+    }
+
+    fclose(in);
+    fclose(out);
+    return 0;
+}

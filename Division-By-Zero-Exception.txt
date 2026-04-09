@@ -1,0 +1,28 @@
+#include<iostream>
+using namespace std;
+void divide(int a,int y)
+{
+   int z,x;
+   z=x-y;
+   if(z!=0)
+   {
+      int r=x/y;
+      cout<<"Result"<<r<<"\n";
+   }
+   else
+   {
+      throw(z);
+      cout<<"The statement will not be executed";
+   }
+}
+int main()
+{
+   try
+   {
+      divide(20,0);
+   }
+   catch(int z)
+   {
+      cout<<"The exception dividion by zero";
+   }
+}

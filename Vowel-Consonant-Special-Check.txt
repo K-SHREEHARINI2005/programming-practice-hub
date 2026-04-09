@@ -1,0 +1,6 @@
+ch1=input("enter the string")
+ch2=input("enter the substring")
+if ch2 in ch1:
+   print("the substring is found")
+else:
+   print("the substring is not found")

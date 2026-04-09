@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+struct ARP {
+    char ip[20];
+    char mac[20];
+};
+int main() {
+    int server_socket, client_socket;
+    struct sockaddr_in server_addr, client_addr;
+    socklen_t addr_size;
+    char buffer[100];
+    int choice, i, found;
+    struct ARP table[3];
+    strcpy(table[0].ip, "192.168.1.1");
+    strcpy(table[0].mac, "AA:BB:CC:DD:EE:01");
+
+    strcpy(table[1].ip, "192.168.1.2");
+    strcpy(table[1].mac, "AA:BB:CC:DD:EE:02");
+
+    strcpy(table[2].ip, "192.168.1.3");
+    strcpy(table[2].mac, "AA:BB:CC:DD:EE:03");
+    server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if(server_socket < 0) {
+        printf("Socket creation failed.\n");
+        exit(1);
+    }
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(5354);
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    if(bind(server_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+        printf("Bind failed.\n");
+        exit(1);
+    }
+    if(listen(server_socket, 5) < 0) {
+        printf("Listen failed.\n");
+        exit(1);
+    }
+    printf("ARP Server is running...\n");
+
+    addr_size = sizeof(client_addr);
+    client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &addr_size);
+    if(client_socket < 0) {
+        printf("Accept failed.\n");
+        exit(1);
+    }
+    recv(client_socket, buffer, sizeof(buffer), 0);
+    choice = atoi(buffer);
+    recv(client_socket, buffer, sizeof(buffer), 0);
+
+    found = 0;
+
+    if(choice == 1) {
+        for(i = 0; i < 3; i++) {
+            if(strcmp(table[i].ip, buffer) == 0) {
+                send(client_socket, table[i].mac, sizeof(table[i].mac), 0);
+                found = 1;
+                break;
+            }
+        }
+        if(!found) {
+            send(client_socket, "IP not found", 20, 0);
+        }
+    }
+    else if(choice == 2) {
+        for(i = 0; i < 3; i++) {
+            if(strcmp(table[i].mac, buffer) == 0) {
+                send(client_socket, table[i].ip, sizeof(table[i].ip), 0);
+                found = 1;
+                break;
+            }
+        }
+        if(!found) {
+            send(client_socket, "MAC not found", 20, 0);
+        }
+    }
+    else {
+        send(client_socket, "Invalid Choice", 20, 0);
+    }
+
+    close(client_socket);
+    close(server_socket);
+
+    return 0;
+}
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+int main() {
+    int client_socket;
+    struct sockaddr_in server_addr;
+    char buffer[100];
+    int choice;
+    client_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if(client_socket < 0) {
+        printf("Socket creation failed.\n");
+        exit(1);
+    }
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(5354);
+    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    if(connect(client_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+        printf("Connection failed.\n");
+        exit(1);
+    }
+    printf("1.MAC from IP\n");
+    scanf("%d", &choice);
+    sprintf(buffer, "%d", choice);
+    send(client_socket, buffer, sizeof(buffer), 0);
+
+    if(choice == 1) {
+        printf("Enter IP Address: ");
+        scanf("%s", buffer);
+        send(client_socket, buffer, sizeof(buffer), 0);
+    }
+    //else if(choice == 2) {
+      //  printf("Enter MAC Address: ");
+        //scanf("%s", buffer);
+       // send(client_socket, buffer, sizeof(buffer), 0);
+   // }
+    recv(client_socket, buffer, sizeof(buffer), 0);
+    printf("Response from server: %s\n", buffer);
+
+    close(client_socket);
+
+    return 0;
+}

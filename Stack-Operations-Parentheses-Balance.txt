@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#define MAX 100
+ typedef struct {
+ char items[MAX];
+ int top;
+} Stack;
+
+
+[23bit089@mepcolinux ds]$cc stk.h
+[23bit089@mepcolinux ds]$cat stki.c
+#include"stk.h"
+bool isEmpty(Stack *s) {
+    return s->top == -1;
+}
+void initializeStack(Stack *s) {
+       s->top = -1;
+}
+bool isFull(Stack *s) {
+    return s->top == MAX - 1;
+}
+
+void push(Stack *s, char value) {
+    if(isFull(s))
+    {
+        printf("Stack Overflow\n");
+        exit(1);
+    }
+    else
+    {
+        s->items[(s->top)++]=value;
+    }
+}
+
+char pop(Stack *s) {
+    if (isEmpty(s)) {
+        printf("Stack Underflow\n");
+        exit(1);
+    } else {
+        char value = s->items[(s->top)--];
+        printf("Popped from the stack.\n", &value);
+        return value;
+    }
+}
+
+void display(Stack *s) {
+   int i;
+    if (isEmpty(s)) {
+        printf("Stack is empty\n");
+    } else {
+        printf("Stack contents: ");
+        for (i = 0; i <= s->top; i++) {
+            printf("%c ", s->items[i]);
+        }
+        printf("\n");
+    }
+}
+
+bool areParenthesesBalanced(Stack *s, char expr[]) {
+    int i;
+    for (i = 0; expr[i] != '\0'; i++) {
+        char current = expr[i];
+
+        if (current == '(' || current == '{' || current == '[') {
+            push(s, current);
+        } else if (current == ')' || current == '}' || current == ']') {
+            if (isEmpty(s)) {
+                return false;
+            }
+
+            char popped = pop(s);
+            if ((current == ')' && popped != '(') ||
+                (current == '}' && popped != '{') ||
+                (current == ']' && popped != '[')) {
+                return false;
+            }
+        }
+    }
+
+    return isEmpty(s);
+}
+
+
+
+[23bit089@mepcolinux ds]$cat stka.c
+#include"stk.h"
+int main()
+ {
+    Stack*s;
+    int choice;
+    char expr[MAX];
+    char value;
+    while (1) {
+        printf("\nStack Operations:\n");
+        printf("1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Check Parentheses Balance\n");
+        printf("4. Display Stack\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d",&choice);
+
+        switch (choice) {
+            case 1:
+                initializeStack(&s);
+                printf("Enter a character to push:");
+                scanf("%s",&value);
+                push(&s,value);
+                printf("pushed values");
+                break;
+            case 2:
+                if (!isEmpty(&s)) {
+                    pop(&s);
+                } else {
+                    printf("Stack is empty, cannot pop.\n");
+                }
+                break;
+            case 3:
+                printf("Enter an expression: ");
+                scanf("%s", expr);
+                if (areParenthesesBalanced(&s, expr)) {
+                    printf("The expression has balanced parentheses.\n");
+                } else {
+                    printf("The expression does have balanced parentheses.\n");
+                }
+                break;
+            case 4:
+                display(&s);
+                break;
+            case 5:
+                exit(0);
+            default:
+                printf("Invalid choice, please try again.\n");
+        }
+    }
+
+    return 0;
+}

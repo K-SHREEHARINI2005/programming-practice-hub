@@ -1,0 +1,5 @@
+import math
+height=int(input("enter the value"))
+length=int(input("enter the value"))
+hypo=math.hypot(height,length)
+print(hypo)

@@ -1,0 +1,36 @@
+#include<iostream>
+using std::string;
+using namespace std;
+class cricket
+{
+   private:
+      string name;
+      int jerseyno;
+      int runrate;
+   public:
+      void setinfo(string n,int j,int r)
+      {
+         name=n;
+         jerseyno=j;
+         runrate=r;
+      }
+      void displayinfo()
+      {
+         cout<<"Name = "<<name<<endl;
+         cout<<"Jersey no = "<<jerseyno<<endl;
+         cout<<"Run rate = "<<runrate<<endl;
+      }
+};
+int main()
+{
+   const int numplayers=2;
+   cricket cricketers[numplayers];
+   cricketers[0].setinfo("Dhoni",7,108);
+   cricketers[1].setinfo("Jadeja",21,90);
+   cout<<"List of players"<<endl;
+   for(int i=0;i<numplayers;i++)
+   {
+      cricketers[i].displayinfo();
+   }
+   return 0;
+}

@@ -1,0 +1,37 @@
+#include<iostream>
+using std::string;
+using namespace std;
+class book
+{
+   private:
+      string title;
+      string author;
+      int price;
+   public:
+      void setinfo(string t,string a,int p)
+      {
+         title=t;
+         author=a;
+         price=p;
+      }
+      void displayinfo()
+      {
+         cout<<"Title = "<<title<<endl;
+         cout<<"Author = "<<author<<endl;
+         cout<<"Price = "<<price<<endl;
+      }
+};
+  int main()
+{
+   const int numbooks=3;
+   book books[numbooks];
+   books[0].setinfo("oops","trevied",2500);
+   books[1].setinfo("twisted series","ana hyung",1500);
+   books[2].setinfo("harrypotter series","jk rowling",1300);
+   cout<<"List of books"<<endl;
+   for(int i=0;i<numbooks;i++)
+   {
+      books[i].displayinfo();
+   }
+   return 0;
+}

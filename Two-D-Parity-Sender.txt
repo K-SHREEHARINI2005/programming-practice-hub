@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <string.h>
+int count(char row[]) {
+    int count = 0, i;
+    for (i = 0; i < 8; i++) {
+        if (row[i] == '1') {
+            count++;
+        }
+    }
+    return count;
+}
+int main() {
+    FILE *fp;
+    char input[200], padded[200];
+    char data[20][10];
+    int rowcount = 0;
+    printf("Enter binary input: ");
+    scanf("%s", input);
+    strcpy(padded, input);
+    while (strlen(padded) % 8 != 0) {
+        strcat(padded, "0");
+    }
+    int totalbits = strlen(padded);
+    int i;
+    for ( i = 0; i < totalbits; i += 8) {
+        char row[10];
+        strncpy(row, padded + i, 8);
+        row[8] = '\0';
+
+        int ones = count(row);
+        row[8] = (ones % 2 == 0) ? '0' : '1';
+        row[9] = '\0';
+
+        strcpy(data[rowcount], row);
+        rowcount++;
+    }
+    int col,row;
+    char columnpart[10];
+    for ( col = 0; col < 9; col++) {
+        int ones = 0;
+        for ( row = 0; row < rowcount; row++) {
+            if (data[row][col] == '1') {
+                ones++;
+            }
+        }
+        columnpart[col] = (ones % 2 == 0) ? '0' : '1';
+    }
+    columnpart[9] = '\0';
+
+    fp = fopen("parity.c", "w");
+    for (i = 0; i < rowcount; i++) {
+        fputs(data[i], fp);
+    }
+    fputs(columnpart, fp);
+    fclose(fp);
+    return 0;
+}

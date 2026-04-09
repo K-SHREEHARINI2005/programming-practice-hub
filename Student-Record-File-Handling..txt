@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct student {
+   int roll_no;
+   char name[50];
+   float mark1, mark2, total, average;
+};
+
+int main() {
+   int n, i, roll_no, max_index = 0;
+   float max_total = 0;
+   printf("Enter the number of students: ");
+   scanf("%d", &n);
+   struct student s[n];
+
+   for (i = 0; i < n; i++) {
+      printf("\nEnter details of student %d:\n", i + 1);
+      printf("Roll No: ");
+      scanf("%d", &s[i].roll_no);
+      printf("Name: ");
+      scanf("%s", s[i].name);
+      printf("Mark 1: ");
+      scanf("%f", &s[i].mark1);
+      printf("Mark 2: ");
+      scanf("%f", &s[i].mark2);
+      s[i].total = s[i].mark1 + s[i].mark2;
+      s[i].average = s[i].total / 2;
+   }
+
+   FILE *fp;
+   fp = fopen("students.bin", "wb");
+
+   if (fp == NULL) {
+      printf("Error opening file\n");
+      exit(1);
+   }
+
+   fwrite(s, sizeof(struct student), n, fp);
+   fclose(fp);
+   printf("\nStudent details written to file students.bin\n");
+   printf("\nEnter the roll number of the student whose details you want to display: ");
+   scanf("%d", &roll_no);
+   fp = fopen("students.bin", "rb");
+   if (fp == NULL) {
+      printf("Error opening file\n");
+      exit(1);
+   }
+   for (i = 0; i < n; i++) {
+      fread(&s[i], sizeof(struct student), 1, fp);
+      if (s[i].roll_no == roll_no) {
+         printf("\nDetails of student with roll number %d:\n", roll_no);
+         printf("Name: %s\n", s[i].name);
+         printf("Mark 1: %.2f\n", s[i].mark1);
+         printf("Mark 2: %.2f\n", s[i].mark2);
+         printf("Total: %.2f\n", s[i].total);
+         printf("Average: %.2f\n", s[i].average);
+      }
+      if (s[i].total > max_total) {
+         max_total = s[i].total;
+         max_index = i;
+      }
+   }
+   printf("\nDetails of the student with the highest total marks:\n");
+   printf("Name: %s\n", s[max_index].name);
+   printf("Roll No: %d\n", s[max_index].roll_no);
+   printf("Mark 1: %.2f\n", s[max_index].mark1);
+   printf("Mark 2: %.2f\n", s[max_index].mark2);
+   printf("Total: %.2f\n", s[max_index].total);
+   printf("Average: %.2f\n", s[max_index].average);
+
+   fclose(fp);
+   return 0;
+}

@@ -1,0 +1,135 @@
+Given a collection of candidate numbers (candidates) and a target number (target), find all unique combinations in candidates where the candidate numbers sum to target.
+
+
+Each number in candidates may only be used once in the combination.
+
+
+Note: The solution set must not contain duplicate combinations.
+
+
+ 
+
+
+Example 1:
+
+
+Input: candidates = [10,1,2,7,6,1,5], target = 8
+Output: 
+[
+[1,1,6],
+[1,2,5],
+[1,7],
+[2,6]
+]
+
+Example 2:
+
+
+Input: candidates = [2,5,2,1,2], target = 5
+Output: 
+[
+[1,2,2],
+[5]
+]
+
+ 
+
+
+Constraints:
+
+
+
+1 <= candidates.length <= 100
+1 <= candidates[i] <= 50
+1 <= target <= 30
+
+
+#include <stdlib.h>
+
+#include <string.h>
+
+
+// Standard comparison for qsort
+
+int compare(const void* a, const void* b) {
+
+    return (*(int*)a - *(int*)b);
+
+}
+
+
+void backtrack(int* candidates, int size, int target, int start, int* path, int pathSize, 
+
+               int** res, int* resSize, int** columnSizes) {
+
+    if (target == 0) {
+
+        // Found a valid combination
+
+        res[*resSize] = (int*)malloc(pathSize * sizeof(int));
+
+        memcpy(res[*resSize], path, pathSize * sizeof(int));
+
+        (*columnSizes)[*resSize] = pathSize;
+
+        (*resSize)++;
+
+        return;
+
+    }
+
+
+    for (int i = start; i < size; i++) {
+
+        // Pruning: if current number exceeds remaining target, stop this branch
+
+        if (candidates[i] > target) break;
+
+
+        // Skip duplicates at the same recursion level
+
+        if (i > start && candidates[i] == candidates[i - 1]) continue;
+
+
+        path[pathSize] = candidates[i];
+
+        backtrack(candidates, size, target - candidates[i], i + 1, path, pathSize + 1, 
+
+                  res, resSize, columnSizes);
+
+    }
+
+}
+
+
+int** combinationSum2(int* candidates, int candidatesSize, int target, int* returnSize, int** returnColumnSizes) {
+
+    // 1. Sort to handle duplicates and allow pruning
+
+    qsort(candidates, candidatesSize, sizeof(int), compare);
+
+
+    // 2. Allocate memory for results (Max combinations for target 30 is relatively small)
+
+    int maxResults = 1000; 
+
+    int** res = (int**)malloc(maxResults * sizeof(int*));
+
+    *returnColumnSizes = (int*)malloc(maxResults * sizeof(int));
+
+    *returnSize = 0;
+
+
+    int* path = (int*)malloc(candidatesSize * sizeof(int));
+
+
+    // 3. Start backtracking
+
+    backtrack(candidates, candidatesSize, target, 0, path, 0, res, returnSize, returnColumnSizes);
+
+
+    free(path);
+
+    return res;
+
+}

@@ -1,0 +1,29 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+   int bal=1000,amt;
+   cout<<"enter the amount to withdraw";
+   cin>>amt;
+   try
+      {
+         if(amt<bal)
+         {
+            cout<<"amount withdraw"<<endl;
+            cout<<"balance="<<bal-amt;
+         }
+         else
+         {
+            throw amt;
+         }
+      }
+   catch(int amt)
+   {
+      cout<<"exception caught"<<endl;
+      cout<<"amount exceeds balance"<<endl;
+   }
+   catch(...)
+   {
+      cout<<"no specified code is executed";
+   }
+}

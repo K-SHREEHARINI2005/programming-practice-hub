@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct faculty {
+   int faculty_id;
+   char name[50];
+   char department[50];
+   char designation[50];
+   char qualification[50];
+};
+
+
+int main()
+{
+   int n, i, j;
+   char dept[50];
+   printf("Enter the number of faculty members: ");
+   scanf("%d", &n);
+   struct faculty f[n];
+  for(i = 0; i < n; i++) {
+      printf("\nEnter details of faculty member %d:\n", i + 1);
+      printf("Faculty ID: ");
+      scanf("%d", &f[i].faculty_id);
+      printf("Name: ");
+      scanf("%s", f[i].name);
+      printf("Department: ");
+      scanf("%s", f[i].department);
+      printf("Designation: ");
+      scanf("%s", f[i].designation);
+      printf("Qualification: ");
+      scanf("%s", f[i].qualification);
+   }
+
+   FILE *fp;
+   fp = fopen("faculty.bin", "wb");
+   if(fp == NULL) {
+      printf("Error opening file\n");
+      exit(1);
+   }
+   fwrite(f, sizeof(struct faculty), n, fp);
+   fclose(fp);
+   printf("\nFaculty details written to file faculty.bin\n");
+   printf("\nEnter the department name to display faculty details: ");
+   scanf("%s", dept);
+   fp = fopen("faculty.bin", "rb");
+   if(fp == NULL) {
+      printf("Error opening file\n");
+      exit(1);
+   }
+   for(i = 0; i < n; i++) {
+      fread(&f[i], sizeof(struct faculty), 1, fp);
+      if(strcmp(f[i].department, dept) == 0) {
+         printf("\nDetails of faculty member %d:\n", i + 1);
+         printf("Faculty ID: %d\n", f[i].faculty_id);
+         printf("Name: %s\n", f[i].name);
+         printf("Department: %s\n", f[i].department);
+         printf("Designation: %s\n", f[i].designation);
+         printf("Qualification: %s\n", f[i].qualification);
+      }
+   }
+   fclose(fp);
+   return 0;
+}

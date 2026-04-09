@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+
+#define PORT 6799
+#define MAX_PKT 10
+#define WINDOW_SIZE 4
+
+int main() {
+    int sockfd;
+    struct sockaddr_in server_addr;
+    char buffer[1024];
+    int base = 0, next_seq = 0;
+    int total_packets = MAX_PKT;
+
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) { perror("Socket"); exit(1); }
+
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(PORT);
+    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    if (connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Connect"); exit(1); }
+
+    while (base < total_packets) {
+        // send packets in window
+        while (next_seq < base + WINDOW_SIZE && next_seq < total_packets) {
+            sprintf(buffer, "%d", next_seq);
+            send(sockfd, buffer, strlen(buffer) + 1, 0);
+            printf("Sent packet %d\n", next_seq);
+            next_seq++;
+        }
+
+        // receive ACK
+        int n = recv(sockfd, buffer, sizeof(buffer), 0);
+        if (n <= 0) {
+            printf("Timeout! Resending from packet %d...\n", base);
+            next_seq = base; // Go-Back-N: resend from base
+            continue;
+        }
+
+        int ack;
+        sscanf(buffer, "%d", &ack);
+        printf("Received ACK %d\n", ack);
+        base = ack + 1; // slide window
+    }
+
+    close(sockfd);
+    return 0;
+}

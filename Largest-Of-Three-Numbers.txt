@@ -1,0 +1,7 @@
+ch=input("enter the a character")
+if ch in('a','e','i','o','u','A','E','I','O','U'):
+   print(ch,"it is a vowel")
+elif ch>='' and ch<='@' or ch>='[' and ch<='`' or ch>='{' and ch<='~':
+   print(ch,"it is a special character")
+else:
+   print(ch,"it is a consonant")

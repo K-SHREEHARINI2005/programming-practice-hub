@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+int main() {
+    FILE *fp;
+    char data[21][10];
+    int rowcount = 0;
+    int errors = 0;
+    fp = fopen("parity.c", "r");
+    if (fp == NULL) {
+        printf("Not found\n");
+        return 1;
+    }
+    while (fgets(data[rowcount], sizeof(data[rowcount]), fp)) {
+        rowcount++;
+    }
+    fclose(fp);
+    int rows = rowcount - 1;
+    int i,j;
+for ( i = 0; i < rows; i++) {
+        int ones = 0;
+        for (j = 0; j < 9; j++) {
+            if (data[i][j] == '1') {
+                ones++;
+            }
+        }
+        if (ones % 2 != 0) {
+            printf("? Has error in row %d\n", i + 1);
+            errors = 1;
+        }
+    }
+    int col,row;
+    for (col = 0; col < 9; col++) {
+        int ones = 0;
+        for ( row = 0; row < rowcount; row++) {
+            if (data[row][col] == '1') {
+                ones++;
+            }
+        }
+        if (ones % 2 != 0) {
+            printf("? Error in column %d\n", col + 1);
+            errors = 1;
+        }
+    }
+    if (!errors)
+        printf("No errors\n");
+    else
+        printf("Errors\n");
+
+    return 0;
+}

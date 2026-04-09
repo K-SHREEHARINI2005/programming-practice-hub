@@ -1,0 +1,298 @@
+struct node {
+    struct node *left;
+    struct node *right;
+    struct node *parent;
+    int data;
+};
+
+typedef struct node* root;
+root root_node;
+
+void insert(int x);
+void splay(struct node *t);
+void lrotate(struct node *p);
+void rrotate(struct node *p);
+struct node* findmin(struct node *t);
+struct node* findmax(struct node *t);
+struct node* delete(int x, struct node *t);
+struct node* search(int x, struct node *t);
+void inorder(struct node *t);
+void preorder(struct node *t);
+void postorder(struct node *t);
+void display(struct node *t);
+int height(struct node *t);
+void menu();
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "splay_tree.h"
+
+root root_node = NULL;
+
+void insert(int x) {
+    if (!root_node) {
+        root_node = (root)malloc(sizeof(struct node));
+        root_node->left = NULL;
+        root_node->right = NULL;
+        root_node->data = x;
+        root_node->parent = NULL;
+        return;
+    }
+    struct node *p = root_node;
+    while (1) {
+        if (p->data == x) break;
+        else if (x < p->data) {
+            if (p->left) {
+                p = p->left;
+            } else {
+                p->left = (struct node*)malloc(sizeof(struct node));
+                p->left->parent = p;
+                p->left->right = NULL;
+                p->left->left = NULL;
+                p->left->data = x;
+                p = p->left;
+                break;
+            }
+        } else {
+            if (p->right) {
+                p = p->right;
+            } else {
+                p->right = (struct node*)malloc(sizeof(struct node));
+                p->right->parent = p;
+                p->right->right = NULL;
+                p->right->left = NULL;
+                p->right->data = x;
+                p = p->right;
+                break;
+            }
+        }
+    }
+    splay(p);
+}
+
+void splay(struct node *t) {
+    while (1) {
+        struct node *p = t->parent;
+        if (!p) break;
+        struct node *g = p->parent;
+        if (!g) {
+            if (p->left == t) lrotate(p);
+            else rrotate(p);
+            break;
+        }
+        if (g->left == p) {
+            if (p->left == t) {
+                lrotate(g);
+                lrotate(p);
+            } else {
+                rrotate(p);
+                lrotate(g);
+            }
+        } else {
+            if (p->left == t) {
+                lrotate(p);
+                rrotate(g);
+            } else {
+                rrotate(g);
+                rrotate(p);
+            }
+        }
+    }
+    root_node = t;
+}
+
+void lrotate(struct node *p) {
+    struct node *t = p->left;
+    struct node *b = t->right;
+    struct node *d = p->parent;
+
+    if (d) {
+        if (d->right == p) d->right = t;
+        else d->left = t;
+    }
+    if (b) {
+        b->parent = p;
+    }
+    t->parent = d;
+    t->right = p;
+    p->parent = t;
+    p->left = b;
+}
+
+void rrotate(struct node *p) {
+    struct node *t = p->right;
+    struct node *b = t->left;
+    struct node *d = p->parent;
+
+    if (d) {
+        if (d->right == p) d->right = t;
+        else d->left = t;
+    }
+    if (b) {
+        b->parent = p;
+    }
+    t->parent = d;
+    t->left = p;
+    p->parent = t;
+    p->right = b;
+}
+
+struct node* findmin(struct node *t) {
+    if (t == NULL) return NULL;
+    while (t->left != NULL) {
+        t = t->left;
+    }
+    return t;
+}
+
+struct node* findmax(struct node *t) {
+    if (t == NULL) return NULL;
+    while (t->right != NULL) {
+        t = t->right;
+    }
+    return t;
+}
+
+struct node* delete(int x, struct node *t) {
+    struct node *temp;
+
+    if (t == NULL) {
+        printf("Element not found.\n");
+        return NULL;
+    } else if (x < t->data) {
+        t->left = delete(x, t->left);
+    } else if (x > t->data) {
+        t->right = delete(x, t->right);
+    } else {
+        if (t->left != NULL && t->right != NULL) {
+            temp = findmin(t->right);
+            t->data = temp->data;
+            t->right = delete(t->data, t->right);
+        } else {
+            temp = t;
+            if (t->left == NULL) t = t->right;
+            else if (t->right == NULL) t = t->left;
+            free(temp);
+        }
+    }
+    return t;
+}
+
+struct node* search(int x, struct node *t) {
+    if (t == NULL) return NULL;
+    else if (x < t->data) {
+        return search(x, t->left);
+    } else if (x > t->data) {
+        return search(x, t->right);
+    } else {
+        return t;
+    }
+}
+
+void inorder(struct node *t) {
+    if (t != NULL) {
+        inorder(t->left);
+        printf("%d ", t->data);
+        inorder(t->right);
+    }
+}
+
+void preorder(struct node *t) {
+    if (t != NULL) {
+        printf("%d ", t->data);
+        preorder(t->left);
+        preorder(t->right);
+    }
+}
+
+void postorder(struct node *t) {
+    if (t != NULL) {
+        postorder(t->left);
+        postorder(t->right);
+        printf("%d ", t->data);
+    }
+}
+
+void display(struct node *t) {
+    printf("Inorder Traversal: ");
+    inorder(t);
+    printf("\n");
+
+    printf("Preorder Traversal: ");
+    preorder(t);
+    printf("\n");
+
+    printf("Postorder Traversal: ");
+    postorder(t);
+    printf("\n");
+}
+
+int height(struct node *t) {
+    if (t == NULL) return 0;
+    int left_height = height(t->left);
+    int right_height = height(t->right);
+    return (left_height > right_height ? left_height : right_height)+1 ;
+}
+
+#include <stdio.h>
+#include "splay_tree.h"
+
+void menu() {
+    int choice, value;
+    while (1) {
+        printf("\nMenu:\n");
+        printf("1. Insert\n");
+        printf("2. Delete\n");
+        printf("3. Display\n");
+        printf("4. Find Min\n");
+        printf("5. Find Max\n");
+        printf("6. Height\n");
+        printf("7. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                insert(value);
+                break;
+            case 2:
+                printf("Enter value to delete: ");
+                scanf("%d", &value);
+                root_node = delete(value, root_node);
+                break;
+            case 3:
+                display(root_node);
+                break;
+            case 4:
+                if (root_node) {
+                    struct node *min_node = findmin(root_node);
+                    printf("Minimum: %d\n", min_node->data);
+                } else {
+                    printf("Tree is empty.\n");
+                }
+                break;
+            case 5:
+                if (root_node) {
+                    struct node *max_node = findmax(root_node);
+                    printf("Maximum: %d\n", max_node->data);
+                } else {
+                    printf("Tree is empty.\n");
+                }
+                break;
+            case 6:
+                printf("Height: %d\n", (height(root_node)-1));
+                break;
+            case 7:
+                exit(0);
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+}
+
+int main() {
+    menu();
+    return 0;
+}

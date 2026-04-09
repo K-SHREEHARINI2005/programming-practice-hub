@@ -1,0 +1,8 @@
+import statistics
+d=int(input("enter the number of elements"))
+n=[]
+for i in range(d):
+   v=int(input("enter the element"))
+   n.append(v)
+median=statistics.median(n)
+print("median value:",median)

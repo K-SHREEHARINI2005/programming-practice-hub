@@ -1,0 +1,10 @@
+import math
+choice=input("enter '1'to convert degree to radian\n enter '2'to convert radian to degree")
+if choice=='1':
+   degree=float(input("enter the degree"))
+   radian=math.radians(degree)
+   print("the radian is:",radian)
+elif choice=='2':
+   radian=float(input("enter the radian"))
+   degree=math.degrees(radian)
+   print("the degree is:",degree)

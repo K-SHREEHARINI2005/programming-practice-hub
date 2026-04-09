@@ -1,0 +1,37 @@
+ #include<iostream>
+using std::string;
+using namespace std;
+class student
+{
+   private:
+      string name;
+      int id;
+      int marks;
+   public:
+      void setinfo(string n,int d,int m)
+      {
+         name=n;
+         id=d;
+         marks=m;
+      }
+      void displayinfo()
+      {
+         cout<<"Name = "<<name<<endl;
+         cout<<"Id = "<<id<<endl;
+         cout<<"Marks = "<<marks<<endl;
+      }
+};
+int main()
+{
+   const int numstudents=3;
+   student students[numstudents];
+   students[0].setinfo("Ram",21,91);
+   students[1].setinfo("Rani",23,89);
+   students[2].setinfo("Ravi",25,99);
+   cout<<"List of students"<<endl;
+   for(int i=0;i<numstudents;i++)
+   {
+      students[i].displayinfo();
+   }
+   return 0;
+}

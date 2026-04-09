@@ -1,0 +1,93 @@
+#include"list.h"
+int main() {
+    Node* head = NULL;
+    int choice, position, i;
+    char data, str[100];
+
+    printf("Enter a string: ");
+    scanf("%s", str);
+    for (i = 0; i < strlen(str); i++) {
+        insert(&head, str[i], i);
+    }
+
+    while (1) {
+        printf("\nDoubly Linked List Operations:\n");
+        printf("1. Insert\n");
+        printf("2. Delete\n");
+        printf("3. Search\n");
+        printf("4. Locate\n");
+        printf("5. Is Empty\n");
+        printf("6. Make Empty\n");
+        printf("7. Retrieve\n");
+        printf("8. Check Palindrome\n");
+        printf("9. Display\n");
+        printf("10. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data to insert: ");
+                scanf(" %c", &data);
+                printf("Enter position to insert: ");
+                scanf("%d", &position);
+                insert(&head, data, position);
+                break;
+            case 2:
+                printf("Enter position to delete: ");
+                scanf("%d", &position);
+                del(&head, position);
+                break;
+            case 3:
+                printf("Enter data to search: ");
+                scanf(" %c", &data);
+                if (search(head, data))
+                    printf("Data found in the list.\n");
+                else
+                    printf("Data not found in the list.\n");
+                break;
+            case 4:
+                printf("Enter data to locate: ");
+                scanf(" %c", &data);
+                position = locate(head, data);
+                if (position != -1)
+                    printf("Data found at position %d.\n", position);
+                else
+                    printf("Data not found in the list.\n");
+                break;
+            case 5:
+                if (isEmpty(head))
+                    printf("The list is empty.\n");
+                else
+                    printf("The list is not empty.\n");
+                break;
+            case 6:
+                makeEmpty(&head);
+                printf("List has been made empty.\n");
+                break;
+            case 7:
+                printf("Enter position to retrieve: ");
+                scanf("%d", &position);
+                data = retrieve(head, position);
+                if (data != '\0')
+                    printf("Data at position %d is %c.\n", position, data);
+                break;
+            case 8:
+                if (checkPalindrome(head))
+                    printf("The list is a palindrome.\n");
+                else
+                    printf("The list is not a palindrome.\n");
+                break;
+            case 9:
+                printf("List contents: ");
+                display(head);
+                break;
+            case 10:
+                exit(0);
+            default:
+                printf("Invalid choice, please try again.\n");
+        }
+    }
+
+    return 0;
+}

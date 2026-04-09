@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct telephone_directory {
+   char telephone_number[20];
+   char owner_name[50];
+   char door_no[10];
+   char street_name[50];
+   char locality[50];
+   char city[50];
+   char pincode[10];
+};
+
+int main() {
+   int n, i, j;
+   char street[50];
+   printf("Enter the number of entries: ");
+   scanf("%d", &n);
+   struct telephone_directory td[n];
+
+   for (i = 0; i < n; i++) {
+      printf("\nEnter details of entry %d:\n", i + 1);
+      printf("Telephone Number: ");
+      scanf("%s", td[i].telephone_number);
+      printf("Owner Name: ");
+     scanf("%s", td[i].owner_name);
+     printf("Door No: ");
+     scanf("%s", td[i].door_no);
+     printf("Street Name: ");
+     scanf("%s", td[i].street_name);
+    printf("Locality: ");
+    scanf("%s", td[i].locality);
+    printf("City: ");
+    scanf("%s", td[i].city);
+    printf("Pincode: ");
+    scanf("%s", td[i].pincode);
+   }
+
+   FILE *fp;
+   fp = fopen("telephone_directory.bin", "wb");
+
+   if (fp == NULL) {
+      printf("Error opening file");
+      exit(1);
+  }
+
+   fwrite(td, sizeof(struct telephone_directory), n, fp);
+   fclose(fp);
+
+   printf("\nTelephone directory details written to file telephone_directory.bin\n");
+
+   printf("\nEnter the street name to update door numbers: ");
+   scanf("%s", street);
+   fp = fopen("telephone_directory.bin", "rb+");
+   if (fp == NULL) {
+      printf("Error opening file\n");
+      exit(1);
+   }
+
+   for (i = 0; i < n; i++) {
+      fread(&td[i], sizeof(struct telephone_directory), 1, fp);
+      if (strcmp(td[i].street_name, street) == 0) {
+         int door_no = atoi(td[i].door_no);
+         door_no += 10;
+         sprintf(td[i].door_no, "%d", door_no);
+         fseek(fp, -sizeof(struct telephone_directory), SEEK_CUR);
+         fwrite(&td[i], sizeof(struct telephone_directory), 1, fp);
+      }
+   }
+
+   fclose(fp);
+
+   printf("\nDoor numbers updated successfully for all entries belonging to %s street.\n", street);
+
+   return 0;
+}

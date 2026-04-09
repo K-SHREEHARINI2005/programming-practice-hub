@@ -1,0 +1,46 @@
+#include<iostream>
+using std::string;
+using namespace std;
+class employee
+{
+   private:
+      string name;
+      int id;
+      int age;
+      int yoe;
+      int sal;
+   public:
+      void setinfo(string n,int i,int a,int y,int s)
+      {
+         name=n;
+         id=i;
+         age=a;
+         yoe=y;
+         sal=s;
+      }
+      void displayinfo()
+      {
+         cout<<"Name = "<<name<<endl;
+         cout<<"Id = "<<id<<endl;
+         cout<<"Age = "<<age<<endl;
+         cout<<"Yoe = "<<yoe<<endl;
+         cout<<"Sal = "<<sal<<endl;
+      }
+};
+int main()
+{
+   const int numemployees=5;
+   employee employees[numemployees];
+   employees[0].setinfo("Ram",123,45,21,2500);
+   employees[1].setinfo("Ravi",124,23,12,1500);
+   employees[2].setinfo("Sita",125,34,10,1300);
+   employees[3].setinfo("Raja",126,38,10,1200);
+   employees[4].setinfo("Rani",127,29,7,1000);
+   cout<<"List of employees"<<endl;
+   for(int i=0;i<numemployees;i++)
+   {
+      employees[i].displayinfo();
+   }
+   return 0;
+}
+[2

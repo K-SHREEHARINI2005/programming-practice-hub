@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* longestPalindrome(char* s) {
+    int n = strlen(s);
+    if (n < 1) return "";
+
+    int start = 0, end = 0;
+
+    void expandAroundCenter(int left, int right) {
+        while (left >= 0 && right < n && s[left] == s[right]) {
+            left--;
+            right++;
+        }
+
+        if (right - left - 1 > end - start) {
+            start = left + 1;
+            end = right - 1;
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        expandAroundCenter(i, i);
+        expandAroundCenter(i, i + 1);
+    }
+
+    char* result = malloc(end - start + 2);
+    strncpy(result, s + start, end - start + 1);
+    result[end - start + 1] = '\0';
+
+    return result;
+}

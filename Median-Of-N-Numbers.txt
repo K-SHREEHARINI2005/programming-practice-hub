@@ -1,0 +1,7 @@
+import math
+value1=int(input("enter the value"))
+value2=int(input("enter the value"))
+p=math.pow(value1,value2)
+squareroot=math.sqrt(p)
+print(p)
+print(squareroot)

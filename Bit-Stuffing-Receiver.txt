@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    FILE *in = fopen("a.txt", "r");
+    FILE *out = fopen("b.txt", "w");
+
+    if (!in || !out) {
+        printf("Error opening files.");
+    }
+    int i=7;
+    int j=0,count;
+    char k[200], stu[400];
+     fscanf(in, "%s", k);
+    int d = strlen(k);
+    if(strncmp(k, "0111110", 7) != 0 || strncmp(&k[d - 7], "0111110", 7) != 0)  {
+        printf("incorrect frame.");
+    }
+    while(i<d-7){
+   // for (i = 7; i < d-7;i++) {
+       // stu[j] = k[i];
+
+        if (k[i] == '1') {
+            count++;
+        } else {
+            count = 0;
+        }
+
+        if (count == 5&&stu[j-5]=='0') {
+            stu[j] = k[i++];
+            i++;
+            j++;
+            count = 0;
+        }
+        else{
+           stu[j]=k[i];
+           i++;
+           j++;
+    }}
+
+ fprintf(out,"%s",stu);
+ fclose(in);
+ fclose(out);
+}
