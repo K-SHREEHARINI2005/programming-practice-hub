@@ -1,0 +1,72 @@
+We define the following:
+
+    A subarray of an -element array is an array composed from a contiguous block of the original array's elements. For example, if , then the subarrays are , , , , , and . Something like would not be a subarray as it's not a contiguous subsection of the original array.
+    The sum of an array is the total sum of its elements.
+        An array's sum is negative if the total sum of its elements is negative.
+        An array's sum is positive if the total sum of its elements is positive.
+
+Given an array of integers, find and print its number of negative subarrays on a new line.
+
+Input Format
+
+The first line contains a single integer, , denoting the length of array .
+The second line contains space-separated integers describing each respective element, , in array .
+
+Constraints
+
+Output Format
+
+Print the number of subarrays of having negative sums.
+
+Sample Input
+
+5
+1 -2 4 -5 1
+
+Sample Output
+
+9
+
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        
+        int n = Integer.parseInt(bufferedReader.readLine().trim()); // Read length of the array
+        String[] inputArray = bufferedReader.readLine().trim().split(" ");
+        
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = Integer.parseInt(inputArray[i]); // Fill the array with input values
+        }
+        
+        bufferedReader.close();
+        
+        // Find and print the number of negative subarrays
+        System.out.println(countNegativeSubarrays(arr));
+    }
+
+    public static int countNegativeSubarrays(int[] arr) {
+        int negativeCount = 0;
+
+        // Loop through all possible starting points of subarrays
+        for (int i = 0; i < arr.length; i++) {
+            int currentSum = 0; // Reset sum for each starting point
+            
+            // Loop through all possible ending points for the current starting point
+            for (int j = i; j < arr.length; j++) {
+                currentSum += arr[j]; // Update the sum of the current subarray
+                
+                // Check if the current subarray sum is negative
+                if (currentSum < 0) {
+                    negativeCount++;
+                }
+            }
+        }
+        
+        return negativeCount; // Return the count of negative subarrays
+    }
+}

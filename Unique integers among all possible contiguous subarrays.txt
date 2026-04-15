@@ -1,0 +1,76 @@
+In computer science, a double-ended queue (dequeue, often abbreviated to deque, pronounced deck) is an abstract data type that generalizes a queue, for which elements can be added to or removed from either the front (head) or back (tail).
+
+Deque interfaces can be implemented using various types of collections such as LinkedList or ArrayDeque classes. For example, deque can be declared as:
+
+Deque deque = new LinkedList<>();
+or
+Deque deque = new ArrayDeque<>();
+
+You can find more details about Deque here.
+
+In this problem, you are given integers. You need to find the maximum number of unique integers among all the possible contiguous subarrays of size .
+
+Note: Time limit is second for this problem.
+
+Input Format
+
+The first line of input contains two integers and : representing the total number of integers and the size of the subarray, respectively. The next line contains space separated integers.
+
+Constraints
+
+The numbers in the array will range between .
+
+Output Format
+
+Print the maximum number of unique integers among all possible contiguous subarrays of size .
+
+Sample Input
+
+6 3
+5 3 5 2 3 2
+
+Sample Output
+
+3
+import java.util.*;
+
+public class Test {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int n = in.nextInt();
+        int m = in.nextInt();
+
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = in.nextInt();
+        }
+
+        System.out.println(maxUniqueInSubarrays(arr, n, m));
+    }
+
+    private static int maxUniqueInSubarrays(int[] arr, int n, int m) {
+        HashMap<Integer, Integer> countMap = new HashMap<>();
+        int maxUnique = 0;
+
+        for (int i = 0; i < n; i++) {
+            // Add new element to the map
+            countMap.put(arr[i], countMap.getOrDefault(arr[i], 0) + 1);
+
+            // Remove the element that is out of the window
+            if (i >= m) {
+                int outgoing = arr[i - m];
+                countMap.put(outgoing, countMap.get(outgoing) - 1);
+                if (countMap.get(outgoing) == 0) {
+                    countMap.remove(outgoing);
+                }
+            }
+
+            // Update the maximum count of unique integers in the current window
+            if (i >= m - 1) {
+                maxUnique = Math.max(maxUnique, countMap.size());
+            }
+        }
+
+        return maxUnique;
+    }
+}

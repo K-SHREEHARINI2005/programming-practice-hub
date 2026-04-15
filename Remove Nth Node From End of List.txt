@@ -1,0 +1,79 @@
+Given the head of a linked list, remove the nth node from the end of the list and return its head.
+
+ 
+
+Example 1:
+
+Input: head = [1,2,3,4,5], n = 2
+Output: [1,2,3,5]
+
+Example 2:
+
+Input: head = [1], n = 1
+Output: []
+
+Example 3:
+
+Input: head = [1,2], n = 1
+Output: [1]
+
+ 
+
+Constraints:
+
+    The number of nodes in the list is sz.
+    1 <= sz <= 30
+    0 <= Node.val <= 100
+    1 <= n <= sz
+
+ #include <stdio.h>
+#include <stdlib.h>
+
+
+
+// Function to remove the nth node from the end of the list
+struct ListNode* removeNthFromEnd(struct ListNode* head, int n) {
+    struct ListNode* dummy = (struct ListNode*)malloc(sizeof(struct ListNode));
+    dummy->next = head; // Initialize dummy node
+    struct ListNode* first = dummy;
+    struct ListNode* second = dummy;
+
+    // Move the first pointer n+1 steps ahead
+    for (int i = 0; i < n + 1; i++) {
+        first = first->next;
+    }
+
+    // Move both pointers until first reaches the end
+    while (first != NULL) {
+        first = first->next;
+        second = second->next;
+    }
+
+    // Remove the nth node from the end
+    struct ListNode* toDelete = second->next;
+    second->next = second->next->next; // Skip the target node
+    free(toDelete); // Free the memory of the deleted node
+
+    // Get the actual head from dummy
+    struct ListNode* newHead = dummy->next;
+    free(dummy); // Free dummy node
+    return newHead; // Return the head of the updated list
+}
+
+// Helper function to create a new node
+struct ListNode* createNode(int value) {
+    struct ListNode* newNode = (struct ListNode*)malloc(sizeof(struct ListNode));
+    newNode->val = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Helper function to print the linked list
+void printList(struct ListNode* head) {
+    struct ListNode* current = head;
+    while (current != NULL) {
+        printf("%d -> ", current->val);
+        current = current->next;
+    }
+    printf("NULL\n");
+}

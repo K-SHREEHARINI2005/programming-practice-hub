@@ -1,0 +1,62 @@
+Given a string containing just the characters '(' and ')', return the length of the longest valid (well-formed) parentheses . 
+
+Example 1:
+
+Input: s = "(()"
+Output: 2
+Explanation: The longest valid parentheses substring is "()".
+
+Example 2:
+
+Input: s = ")()())"
+Output: 4
+Explanation: The longest valid parentheses substring is "()()".
+
+Example 3:
+
+Input: s = ""
+Output: 0
+
+ 
+
+Constraints:
+
+    0 <= s.length <= 3 * 104
+    s[i] is '(', or ')'.
+#include <stdio.h>
+#include <string.h>
+
+int longestValidParentheses(char* s) {
+    if (s == NULL || s[0] == '\0') {
+        return 0; // Handle empty string case
+    }
+
+    int max_length = 0; // To store max length of valid parentheses
+    int last_invalid = -1; // Position of the last invalid parentheses
+    int stack[strlen(s)]; // Stack to hold indices
+    int top = -1; // Stack top index
+
+    for (int i = 0; i < strlen(s); i++) {
+        if (s[i] == '(') {
+            // Push the index of '(' onto the stack
+            stack[++top] = i;
+        } else { // s[i] == ')'
+            if (top >= 0) {
+                // Pop the top element for matching '('
+                top--;
+                if (top >= 0) {
+                    // Calculate length of valid parentheses
+                    max_length = (max_length > i - stack[top]) ? max_length : (i - stack[top]);
+                } else {
+                    // Calculate length from last invalid position
+                    max_length = (max_length > i - last_invalid) ? max_length : (i - last_invalid);
+                }
+            } else {
+                // Update last invalid position
+                last_invalid = i;
+            }
+        }
+    }
+
+    return max_length;
+}
